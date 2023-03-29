@@ -186,8 +186,8 @@ void I_InitGraphics (void)
 
 	screenvisible = true;
 
-    extern int I_InitInput(void);
-    I_InitInput();
+    // extern int I_InitInput(void);
+    // I_InitInput();
 }
 
 void I_ShutdownGraphics (void)

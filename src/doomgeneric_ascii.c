@@ -26,15 +26,15 @@
 #include <string.h>
 #include <ctype.h>
 
-#if defined(_WIN32) || defined(WIN32)
-#define OS_WINDOWS
-#include <windows.h>
-#else
+// #if defined(_WIN32) || defined(WIN32)
+// #define OS_WINDOWS
+// #include <windows.h>
+// #else
 #include <unistd.h>
-#include <termios.h>
+// #include <termios.h>
 #include <sys/ioctl.h>
 #include <time.h>
-#endif
+// #endif
 
 #ifdef OS_WINDOWS
 #define CLK 0
@@ -261,37 +261,37 @@ void DG_ReadInput(void)
 
 	/* Flush input buffer to prevent read of previous unread input */
 	CALL(tcflush(STDIN_FILENO, TCIFLUSH), "DG_DrawFrame: tcflush error %d");
-#else /* defined(OS_WINDOWS) */
-	const HANDLE hInputHandle = GetStdHandle(STD_INPUT_HANDLE);
-	WINDOWS_CALL(hInputHandle == INVALID_HANDLE_VALUE, "DG_ReadInput: %s");
+// #else /* defined(OS_WINDOWS) */
+// 	const HANDLE hInputHandle = GetStdHandle(STD_INPUT_HANDLE);
+// 	WINDOWS_CALL(hInputHandle == INVALID_HANDLE_VALUE, "DG_ReadInput: %s");
 
-	/* Disable canonical mode */
-	DWORD old_mode, new_mode;
-	WINDOWS_CALL(!GetConsoleMode(hInputHandle, &old_mode), "DG_ReadInput: %s");
-	new_mode = old_mode;
-	new_mode &= ~(ENABLE_ECHO_INPUT | ENABLE_LINE_INPUT);
-	WINDOWS_CALL(!SetConsoleMode(hInputHandle, new_mode), "DG_ReadInput: %s");
+// 	/* Disable canonical mode */
+// 	DWORD old_mode, new_mode;
+// 	WINDOWS_CALL(!GetConsoleMode(hInputHandle, &old_mode), "DG_ReadInput: %s");
+// 	new_mode = old_mode;
+// 	new_mode &= ~(ENABLE_ECHO_INPUT | ENABLE_LINE_INPUT);
+// 	WINDOWS_CALL(!SetConsoleMode(hInputHandle, new_mode), "DG_ReadInput: %s");
 
-	DWORD event_cnt;
-	WINDOWS_CALL(!GetNumberOfConsoleInputEvents(hInputHandle, &event_cnt), "DG_ReadInput: %s");
+// 	DWORD event_cnt;
+// 	WINDOWS_CALL(!GetNumberOfConsoleInputEvents(hInputHandle, &event_cnt), "DG_ReadInput: %s");
 
-	/* ReadConsole is blocking so must manually process events */
-	int input_count = 0;
-	if (event_cnt) {
-		INPUT_RECORD input_records[32];
-		WINDOWS_CALL(!ReadConsoleInput(hInputHandle, input_records, 32, &event_cnt), "DG_ReadInput: %s");
+// 	/* ReadConsole is blocking so must manually process events */
+// 	int input_count = 0;
+// 	if (event_cnt) {
+// 		INPUT_RECORD input_records[32];
+// 		WINDOWS_CALL(!ReadConsoleInput(hInputHandle, input_records, 32, &event_cnt), "DG_ReadInput: %s");
 
-		DWORD i;
-		for (i = 0; i < event_cnt; i++) {
-			if (input_records[i].Event.KeyEvent.bKeyDown && input_records[i].EventType == KEY_EVENT) {
-				raw_input_buffer[input_count++] = input_records[i].Event.KeyEvent.uChar.AsciiChar;
-				if (input_count == INPUT_BUFFER_LEN - 1u)
-					break;
-			}
-		}
-	}
+// 		DWORD i;
+// 		for (i = 0; i < event_cnt; i++) {
+// 			if (input_records[i].Event.KeyEvent.bKeyDown && input_records[i].EventType == KEY_EVENT) {
+// 				raw_input_buffer[input_count++] = input_records[i].Event.KeyEvent.uChar.AsciiChar;
+// 				if (input_count == INPUT_BUFFER_LEN - 1u)
+// 					break;
+// 			}
+// 		}
+// 	}
 
-	WINDOWS_CALL(!SetConsoleMode(hInputHandle, old_mode), "DG_ReadInput: %s");
+// 	WINDOWS_CALL(!SetConsoleMode(hInputHandle, old_mode), "DG_ReadInput: %s");
 #endif
 	/* create input buffer */
 	char *raw_input_buf_loc = raw_input_buffer;

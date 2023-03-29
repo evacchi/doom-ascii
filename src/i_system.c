@@ -271,7 +271,7 @@ void I_Quit (void)
 
 static int ZenityAvailable(void)
 {
-    return system(ZENITY_BINARY " --help >/dev/null 2>&1") == 0;
+    return 0; //system(ZENITY_BINARY " --help >/dev/null 2>&1") == 0;
 }
 
 // Escape special characters in the given string so that they can be
@@ -320,32 +320,32 @@ static char *EscapeShellString(char *string)
 
 // Open a native error box with a message using zenity
 
-static int ZenityErrorBox(char *message)
-{
-    int result;
-    char *escaped_message;
-    char *errorboxpath;
-    static size_t errorboxpath_size;
+// static int ZenityErrorBox(char *message)
+// {
+//     int result;
+//     char *escaped_message;
+//     char *errorboxpath;
+//     static size_t errorboxpath_size;
 
-    if (!ZenityAvailable())
-    {
-        return 0;
-    }
+//     if (!ZenityAvailable())
+//     {
+//         return 0;
+//     }
 
-    escaped_message = EscapeShellString(message);
+//     escaped_message = EscapeShellString(message);
 
-    errorboxpath_size = strlen(ZENITY_BINARY) + strlen(escaped_message) + 19;
-    errorboxpath = malloc(errorboxpath_size);
-    M_snprintf(errorboxpath, errorboxpath_size, "%s --error --text=%s",
-               ZENITY_BINARY, escaped_message);
+//     errorboxpath_size = strlen(ZENITY_BINARY) + strlen(escaped_message) + 19;
+//     errorboxpath = malloc(errorboxpath_size);
+//     M_snprintf(errorboxpath, errorboxpath_size, "%s --error --text=%s",
+//                ZENITY_BINARY, escaped_message);
 
-    result = system(errorboxpath);
+//     result = system(errorboxpath);
 
-    free(errorboxpath);
-    free(escaped_message);
+//     free(errorboxpath);
+//     free(escaped_message);
 
-    return result;
-}
+//     return result;
+// }
 
 #endif /* !defined(_WIN32) && !defined(__MACOSX__) */
 
@@ -403,7 +403,7 @@ void I_Error (char *error, ...)
         entry = entry->next;
     }
 
-    exit_gui_popup = !M_ParmExists("-nogui");
+    exit_gui_popup = false;// !M_ParmExists("-nogui");
 
     // Pop up a GUI dialog box to show the error message, if the
     // game was not run from the console (and the user will

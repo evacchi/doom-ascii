@@ -20,15 +20,17 @@ CC=i686-w64-mingw32-gcc-win32
 OUTPUT=$(BINDIR)/doom_ascii.exe
 else
 CC=gcc
-CFLAGS+=-DNORMALUNIX -DLINUX
+CFLAGS+=-DNORMALUNIX -DLINUX --target=wasm32-wasi
 OUTPUT=$(BINDIR)/doom_ascii
 endif
 
-ifeq ($(MAKECMDGOALS),mac)
-LDFLAGS+=-Wl,-dead_strip,-map,$(OUTPUT).map
-else
-LDFLAGS+=-Wl,--gc-sections,-Map,$(OUTPUT).map
-endif
+CC="clang" # path to WASI sdk
+#ifeq ($(MAKECMDGOALS),mac)
+# LDFLAGS+=-Wl,-dead_strip,-map,$(OUTPUT).map
+#LDFLAGS+=-map,$(OUTPUT).map
+#else
+#LDFLAGS+=-Wl,--gc-sections,-Map,$(OUTPUT).map
+#endif
 
 CFLAGS+=-Os -g
 CFLAGS+=-Wall -D_DEFAULT_SOURCE #-DSNDSERV -DUSEASM
